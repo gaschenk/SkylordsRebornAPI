@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
@@ -72,5 +73,37 @@ namespace SkylordsRebornAPI.Cardbase
             webRequest.ContentType = "application/json; charset=utf-8";
             return webRequest;
         }
+
+        public static Card[] HandleCardRequest(List<Tuple<CardRequestProperty, String>> requestProperties)
+        {
+            string url = $"{baseUrl}Cards/GetCards?";
+            for (var index = 0; index < requestProperties.Count; index++)
+            {
+                var requestProperty = requestProperties[index];
+                url +=
+                    $"{(index > 0 ? "&" : "")}{Enum.GetName(typeof(CardRequestProperty), requestProperty.Item1)}={requestProperty.Item2}";
+            }
+
+            var webRequest = WebRequest.Create(url);
+            webRequest.ContentType = "application/json; charset=utf-8";
+            var response = webRequest.GetResponse();
+            string text;
+            using (var sr = new StreamReader(response.GetResponseStream()!))
+            {
+                text = sr.ReadToEnd();
+            }
+
+            var cards = JsonConvert.DeserializeObject<APIWrap<Card>>(text).Result;
+            return cards;
+        }
+    }
+
+    public enum CardRequestProperty
+    {
+        Name,
+        Cost,
+        CardType,
+        Category,
+        Defense,
     }
 }
