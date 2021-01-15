@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using SkylordsRebornAPI.Cardbase;
+using SkylordsRebornAPI;
+using SkylordsRebornAPI.Cardbase.Cards;
 
 namespace Sample1
 {
@@ -10,6 +11,7 @@ namespace Sample1
     {
         private static readonly JsonSerializerSettings Settings = new() {
             MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+            Formatting = Formatting.Indented,
             DateParseHandling = DateParseHandling.None,
             Converters = {
                 new StringEnumConverter()
@@ -17,10 +19,10 @@ namespace Sample1
         };
 
         static void Main() {
-            var x = CardService.HandleCardRequest(new List<Tuple<CardRequestProperty, string>>
+            var x = Instances.CardService.HandleCardRequest(new List<Tuple<RequestProperty, string>>
             {
-                new(CardRequestProperty.Name,"Gro"),
-                new(CardRequestProperty.Defense,"1100")
+                new(RequestProperty.Name,"Gro"),
+                new(RequestProperty.Defense,"1100")
             });
             foreach(var card in x) {
                 Console.WriteLine(JsonConvert.SerializeObject(card, Settings));
