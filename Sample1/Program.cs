@@ -7,24 +7,28 @@ using SkylordsRebornAPI.Cardbase.Cards;
 
 namespace Sample1
 {
-    class Program
+    static class Program
     {
-        private static readonly JsonSerializerSettings Settings = new() {
+        private static readonly JsonSerializerSettings Settings = new()
+        {
             MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
             Formatting = Formatting.Indented,
             DateParseHandling = DateParseHandling.None,
-            Converters = {
+            Converters =
+            {
                 new StringEnumConverter()
             }
         };
 
-        static void Main() {
+        static void Main()
+        {
             var x = Instances.CardService.HandleCardRequest(new List<Tuple<RequestProperty, string>>
             {
-                new(RequestProperty.Name,"Gro"),
-                new(RequestProperty.Defense,"1100")
+                new(RequestProperty.Name, "Gro"),
+                new(RequestProperty.Defense, "1100")
             });
-            foreach(var card in x) {
+            foreach (var card in x)
+            {
                 Console.WriteLine(JsonConvert.SerializeObject(card, Settings));
             }
         }
