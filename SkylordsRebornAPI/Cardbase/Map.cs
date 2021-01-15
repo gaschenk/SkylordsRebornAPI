@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using SkylordsRebornAPI.Cardbase.Cards;
+using SkylordsRebornAPI.Cardbase.Shared;
 
 namespace SkylordsRebornAPI.Cardbase
 {

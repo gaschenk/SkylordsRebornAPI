@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SkylordsRebornAPI.Cardbase.Cards;
+using SkylordsRebornAPI.Cardbase.Shared;
 
 namespace SkylordsRebornAPI.Cardbase
 {

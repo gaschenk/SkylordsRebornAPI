@@ -1,4 +1,4 @@
-﻿namespace SkylordsRebornAPI.Cardbase.Cards
+﻿namespace SkylordsRebornAPI.Cardbase.Shared
 {
     public class Media    {
         public string Name { get; set; } 
