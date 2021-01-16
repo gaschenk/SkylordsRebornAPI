@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
-using SkylordsRebornAPI.Cardbase.Cards;
+using SkylordsRebornAPI.Cardbase.Maps;
 
 namespace SkylordsRebornAPI.Cardbase
 {
-    public class CardService
+    public class MapService
     {
         private readonly string baseUrl = "https://cardbase.skylords.eu/";
-
-        public Card[] HandleCardRequest(List<Tuple<RequestProperty, String>> requestProperties)
+/// <summary>
+/// Does not work due to the API not displaying any results.
+/// </summary>
+/// <param name="requestProperties"></param>
+/// <returns></returns>
+/// <exception cref="Exception"></exception>
+        public Map[] HandleMapRequest(List<Tuple<RequestProperty, String>> requestProperties)
         {
             try
             {
@@ -32,12 +37,12 @@ namespace SkylordsRebornAPI.Cardbase
                     text = sr.ReadToEnd();
                 }
 
-                var deserializeObject = JsonConvert.DeserializeObject<APIWrap<Card>>(text);
+                var deserializeObject = JsonConvert.DeserializeObject<APIWrap<Map>>(text);
                 if (deserializeObject.Success != true)
                     throw new Exception(
                         $"There has been an error with the API.\n{deserializeObject.Exception.Details}");
-                var cards = deserializeObject.Result;
-                return cards;
+                var maps = deserializeObject.Result;
+                return maps;
             }
             catch (Exception exception)
             {
