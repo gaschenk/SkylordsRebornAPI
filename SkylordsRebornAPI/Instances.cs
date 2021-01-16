@@ -6,5 +6,6 @@ namespace SkylordsRebornAPI
     {
         public static CardService CardService { get; } = new();
         public static MapService MapService { get; } = new();
+        public static AuctionService AuctionService { get; } = new();
     }
 }
