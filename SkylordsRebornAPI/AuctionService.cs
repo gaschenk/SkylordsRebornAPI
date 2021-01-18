@@ -62,6 +62,7 @@ namespace SkylordsRebornAPI
                 {
                     text = sr.ReadToEnd();
                 }
+
                 if (text == String.Empty) return null;
                 return JsonConvert.DeserializeObject<List<AuctionEntry>>(text);
             }
