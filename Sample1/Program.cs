@@ -7,7 +7,7 @@ using SkylordsRebornAPI.Cardbase.Cards;
 
 namespace Sample1
 {
-    static class Program
+    internal static class Program
     {
         private static readonly JsonSerializerSettings Settings = new()
         {
@@ -20,17 +20,14 @@ namespace Sample1
             }
         };
 
-        static void Main()
+        private static void Main()
         {
             var x = Instances.CardService.HandleCardRequest(new List<Tuple<RequestProperty, string>>
             {
                 new(RequestProperty.Name, "Gro"),
                 new(RequestProperty.Defense, "1100")
             });
-            foreach (var card in x)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(card, Settings));
-            }
+            foreach (var card in x) Console.WriteLine(JsonConvert.SerializeObject(card, Settings));
         }
     }
 }

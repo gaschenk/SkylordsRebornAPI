@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using SkylordsRebornAPI.Cardbase.Cards;
 using SkylordsRebornAPI.Cardbase.Shared;
 
 namespace SkylordsRebornAPI.Cardbase
 {
     public class Map
     {
-
         public string Name { get; set; }
         public string SubTitle { get; set; }
         public string Campaign { get; set; }
@@ -20,8 +18,8 @@ namespace SkylordsRebornAPI.Cardbase
         public List<string> Prerequisite { get; set; }
 
         public Media Image { get; set; }
-        [JsonProperty("Map")]
-        public Media MapInfo { get; set; }
+
+        [JsonProperty("Map")] public Media MapInfo { get; set; }
 
         public List<string> Difficulties { get; set; } = new();
         // TODO add YoutubeVideo type once API works

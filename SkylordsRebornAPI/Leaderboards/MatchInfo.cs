@@ -4,20 +4,15 @@ namespace SkylordsRebornAPI.Leaderboards
 {
     public class MatchInfo
     {
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonProperty("name")] public string Name { get; set; }
 
-        [JsonProperty("map")]
-        public long Map { get; set; }
+        [JsonProperty("map")] public long Map { get; set; }
 
-        [JsonProperty("time")]
-        public long Time { get; set; }
+        [JsonProperty("time")] public long Time { get; set; }
 
-        [JsonProperty("difficulty")]
-        public long Difficulty { get; set; }
+        [JsonProperty("difficulty")] public long Difficulty { get; set; }
 
-        [JsonProperty("experience")]
-        public long Experience { get; set; }
+        [JsonProperty("experience")] public long Experience { get; set; }
     }
 
     public class PVPMatchInfo
@@ -25,14 +20,11 @@ namespace SkylordsRebornAPI.Leaderboards
         [JsonProperty("players", NullValueHandling = NullValueHandling.Ignore)]
         public string[] Players { get; set; }
 
-        [JsonProperty("baseElo")]
-        public long BaseElo { get; set; }
+        [JsonProperty("baseElo")] public long BaseElo { get; set; }
 
-        [JsonProperty("rating")]
-        public double Rating { get; set; }
+        [JsonProperty("rating")] public double Rating { get; set; }
 
-        [JsonProperty("activity")]
-        public double Activity { get; set; }
+        [JsonProperty("activity")] public double Activity { get; set; }
 
         [JsonProperty("wins", NullValueHandling = NullValueHandling.Ignore)]
         public long? Wins { get; set; }

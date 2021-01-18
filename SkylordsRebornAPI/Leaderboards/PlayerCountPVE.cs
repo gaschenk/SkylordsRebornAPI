@@ -6,6 +6,6 @@
         Coop,
         Triple,
         Team,
-        TripleTeam = 12,
+        TripleTeam = 12
     }
 }

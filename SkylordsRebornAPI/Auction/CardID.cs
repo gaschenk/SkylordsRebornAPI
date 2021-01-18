@@ -1,8 +1,8 @@
 ﻿namespace SkylordsRebornAPI.Auction
 {
     /// <summary>
-    /// How the heck are we supposed to know which Card has which ID?
-    /// At least I didnt find anything regarding this so...
+    ///     How the heck are we supposed to know which Card has which ID?
+    ///     At least I didnt find anything regarding this so...
     /// </summary>
     public enum CardId
     {
@@ -545,6 +545,6 @@
         SantaClaus = 1639,
         AmiiPhantom = 1640,
         SnapjawsB = 1642,
-        FireSphere = 1664,
+        FireSphere = 1664
     }
 }

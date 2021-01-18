@@ -11,6 +11,6 @@
     public enum PvPModes
     {
         Solo = 1,
-        Coop = 2,
+        Coop = 2
     }
 }

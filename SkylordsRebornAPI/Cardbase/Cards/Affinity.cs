@@ -2,7 +2,6 @@
 {
     public enum Affinity
     {
-        None =-1,
-        
+        None = -1
     }
 }

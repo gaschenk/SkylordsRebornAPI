@@ -6,15 +6,15 @@ using SkylordsRebornAPI.Auction;
 
 namespace Sample2
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            RequestBody requestBody = new RequestBody
+            var requestBody = new RequestBody
             {
                 Input = "",
                 Min = 0,
-                Max = 0,
+                Max = 0
             };
             Console.WriteLine($"Amount of auctions: {Instances.AuctionService.GetAmountOfAuctions(requestBody)}");
             var cardInfo = Instances.AuctionService.GetCardInfo(CardId.Batariel);
