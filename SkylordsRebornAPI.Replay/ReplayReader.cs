@@ -21,9 +21,6 @@ namespace SkylordsRebornAPI.Replay
                 if (Encoding.UTF8.GetString(sanityCheck) == "PMV")
                 {
                     var replay = ReadMetaInformation(reader);
-                    while (reader.BaseStream.Position != reader.BaseStream.Length)
-                    {
-                    }
 
                     return replay;
                 }
@@ -94,8 +91,31 @@ namespace SkylordsRebornAPI.Replay
             var player = ReadPlayer(reader, out byte groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
-            
+            ReadActions(reader);
+
             return replay;
+        }
+
+
+        private List<ActionData> ReadActions(BinaryReader reader)
+        {
+            var actions = new List<ActionData>();
+            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            {
+                // The fuck time?
+                var time = reader.ReadUInt32();
+                var size = reader.ReadUInt32();
+                var data = reader.ReadBytes((int) size);
+                actions.Add(new ActionData()
+                {
+                    Data = data,
+                    Time = TimeSpan.FromMilliseconds(time*100)
+                });
+                Console.WriteLine(size);
+                Console.WriteLine(time);
+            }
+
+            return actions;
         }
 
         private Card ReadCard(BinaryReader reader)
@@ -114,10 +134,10 @@ namespace SkylordsRebornAPI.Replay
         {
             var name = ReadName(reader, reader.ReadInt32());
             Console.WriteLine($"name:{name}");
-            
+
             var playerId = reader.ReadUInt64();
             Console.WriteLine("PlayerID:" + playerId);
-            
+
             groupId = reader.ReadByte();
             Console.WriteLine("groupId:" + groupId);
 
@@ -127,18 +147,18 @@ namespace SkylordsRebornAPI.Replay
 
             var deckType = reader.ReadByte();
             Console.WriteLine("deckType:" + deckType);
-            
+
             var cardCount = reader.ReadByte();
-            Console.WriteLine("cardcount:" + cardCount);
-            
+            Console.WriteLine("cardCount:" + cardCount);
+
             //Whatever this is
             var anotherCardCount = reader.ReadByte();
             Console.WriteLine("anotherCardCount:" + anotherCardCount);
-            
+
             var cards = new List<Card>();
             for (var i = 0; i < cardCount; i++)
                 cards.Add(ReadCard(reader));
-            
+
             return new Player()
             {
                 Cards = cards,
@@ -170,5 +190,11 @@ namespace SkylordsRebornAPI.Replay
         {
             return Encoding.Unicode.GetString(reader.ReadBytes(length * 2));
         }
+    }
+
+    public struct ActionData
+    {
+        public byte[] Data { get; set; }
+        public TimeSpan Time { get; set; }
     }
 }
