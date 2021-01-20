@@ -51,6 +51,7 @@ namespace SkylordsRebornAPI.Replay
             replay.MapPath = Encoding.ASCII.GetString(reader.ReadBytes(reader.ReadInt32()));
             Console.WriteLine("path:" + replay.MapPath);
 
+            //Somewhat useless
             var headerLengthUntilActions = reader.ReadUInt32();
 
             reader.ReadBytes(6);
@@ -84,70 +85,90 @@ namespace SkylordsRebornAPI.Replay
             Console.WriteLine("amountOfTeams:" + amountOfTeams);
 
             replay.Teams = new List<Team>();
+
             for (var i = 0; i < amountOfTeams; i++)
             {
-                var length = reader.ReadInt32();
-                Console.WriteLine(length);
-
-                var teamName = Encoding.ASCII.GetString(reader.ReadBytes(length));
-                Console.WriteLine(teamName);
-
-                var teamId = reader.ReadInt32();
-                reader.ReadBytes(2);
-                replay.Teams.Add(new Team
-                {
-                    Name = teamName,
-                    TeamId = teamId,
-                    Players = new List<Player>()
-                });
+                replay.Teams.Add(ReadTeam(reader));
             }
 
-            Console.WriteLine(ReadName(reader, reader.ReadInt32()));
+            var player = ReadPlayer(reader, out byte groupId);
+
+            replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
+            
+            return replay;
+        }
+
+        private Card ReadCard(BinaryReader reader)
+        {
+            return new()
+            {
+                Id = reader.ReadUInt16(),
+                //Unsure?
+                Upgrades = reader.ReadUInt16(),
+                //Unsure?
+                Charges = reader.ReadByte()
+            };
+        }
+
+        private Player ReadPlayer(BinaryReader reader, out byte groupId)
+        {
+            var name = ReadName(reader, reader.ReadInt32());
+            Console.WriteLine($"name:{name}");
+            
             var playerId = reader.ReadUInt64();
             Console.WriteLine("PlayerID:" + playerId);
-            var groupId = reader.ReadByte();
+            
+            groupId = reader.ReadByte();
             Console.WriteLine("groupId:" + groupId);
+
             // Useless?
             var subgroupId = reader.ReadByte();
             Console.WriteLine("subgroupId:" + subgroupId);
 
             var deckType = reader.ReadByte();
             Console.WriteLine("deckType:" + deckType);
+            
             var cardCount = reader.ReadByte();
             Console.WriteLine("cardcount:" + cardCount);
+            
             //Whatever this is
             var anotherCardCount = reader.ReadByte();
             Console.WriteLine("anotherCardCount:" + anotherCardCount);
             
             var cards = new List<Card>();
             for (var i = 0; i < cardCount; i++)
-                cards.Add(new Card
-                {
-                    Id = reader.ReadUInt16(),
-                    //Unsure?
-                    Upgrades = reader.ReadUInt16(),
-                    //Unsure?
-                    Charges = reader.ReadByte()
-                });
-
-            replay.Teams.First(team => team.TeamId == groupId).Players.Add(new Player
+                cards.Add(ReadCard(reader));
+            
+            return new Player()
             {
+                Cards = cards,
                 PlayerId = playerId,
-                Cards = cards
-            });
+                Name = name
+            };
+        }
 
-            foreach (var card in cards)
-                Console.WriteLine($"Id:{card.Id}|Upgrades{card.Upgrades}|Charges{card.Charges}");
-            return replay;
+        private Team ReadTeam(BinaryReader reader)
+        {
+            var length = reader.ReadInt32();
+            Console.WriteLine(length);
+
+            var teamName = Encoding.ASCII.GetString(reader.ReadBytes(length));
+            Console.WriteLine(teamName);
+
+            var teamId = reader.ReadInt32();
+            reader.ReadBytes(2);
+
+            return new Team()
+            {
+                Name = teamName,
+                TeamId = teamId,
+                Players = new List<Player>()
+            };
         }
 
         private string ReadName(BinaryReader reader, int length)
         {
             return Encoding.Unicode.GetString(reader.ReadBytes(length * 2));
-        }
-
-        private void ReadEntry(byte data)
-        {
         }
     }
 }

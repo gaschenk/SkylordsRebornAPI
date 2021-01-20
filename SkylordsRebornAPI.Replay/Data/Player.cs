@@ -6,5 +6,6 @@ namespace SkylordsRebornAPI.Replay.Data
     {
         public List<Card> Cards { get; set; }
         public ulong PlayerId { get; set; }
+        public string Name { get; set; }
     }
 }
