@@ -35,17 +35,17 @@ namespace SkylordsRebornAPI.Replay
         public Data.Replay ReadMetaInformation(BinaryReader reader)
         {
             var replay = new Data.Replay();
-            replay.ReplayFormatVersion = reader.ReadUInt32();
-            Console.WriteLine(replay.ReplayFormatVersion);
+            replay.ReplayRevision = reader.ReadUInt32();
+            Console.WriteLine(replay.ReplayRevision);
 
-            if (replay.ReplayFormatVersion > 200)
+            if (replay.ReplayRevision > 200)
                 // V_gameversion_B7074000:0x407b7
                 reader.ReadBytes(4);
 
             var timeValue = reader.ReadInt32();
             replay.PlayTime = TimeSpan.FromMilliseconds(timeValue * 100);
             Console.WriteLine(replay.PlayTime);
-            if (replay.ReplayFormatVersion >= 218)
+            if (replay.ReplayRevision >= 218)
                 reader.ReadBytes(4);
 
             replay.MapPath = Encoding.ASCII.GetString(reader.ReadBytes(reader.ReadInt32()));
@@ -61,7 +61,7 @@ namespace SkylordsRebornAPI.Replay
             Console.WriteLine("playersPerTeam" + playersPerTeam);
 
             // some other stupid value
-            reader.ReadBytes(replay.ReplayFormatVersion > 200 ? 2 : 4);
+            reader.ReadBytes(replay.ReplayRevision > 200 ? 2 : 4);
 
             replay.HostPlayerId = reader.ReadUInt64();
             Console.WriteLine(replay.HostPlayerId);
