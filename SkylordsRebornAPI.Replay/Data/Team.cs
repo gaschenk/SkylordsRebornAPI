@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SkylordsRebornAPI.Replay
+namespace SkylordsRebornAPI.Replay.Data
 {
     public struct Team
     {

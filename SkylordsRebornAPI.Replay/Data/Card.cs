@@ -1,4 +1,4 @@
-﻿namespace SkylordsRebornAPI.Replay
+﻿namespace SkylordsRebornAPI.Replay.Data
 {
     public struct Card
     {

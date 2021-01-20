@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SkylordsRebornAPI.Replay.Data;
 
 namespace SkylordsRebornAPI.Replay
 {
@@ -10,7 +11,7 @@ namespace SkylordsRebornAPI.Replay
     {
         private List<byte> _bytes = new();
 
-        public Replay ReadReplay(string path)
+        public Data.Replay ReadReplay(string path)
         {
             var bytes = new List<byte>();
             using (var reader = new BinaryReader(File.OpenRead(path)))
@@ -31,9 +32,9 @@ namespace SkylordsRebornAPI.Replay
             }
         }
 
-        public Replay ReadMetaInformation(BinaryReader reader)
+        public Data.Replay ReadMetaInformation(BinaryReader reader)
         {
-            var replay = new Replay();
+            var replay = new Data.Replay();
             replay.ReplayFormatVersion = reader.ReadUInt32();
             Console.WriteLine(replay.ReplayFormatVersion);
 
