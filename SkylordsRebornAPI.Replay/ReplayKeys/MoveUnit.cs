@@ -18,7 +18,7 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             }
 
             Positions = new List<PointF>();
-            for (int i = 0; i < reader.ReadUInt16()) {
+            for (int i = 0; i < reader.ReadUInt16();i++) {
                 Positions.Add(new PointF(reader.ReadSingle(), reader.ReadSingle()));
             }
 
