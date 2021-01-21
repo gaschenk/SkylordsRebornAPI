@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace SkylordsRebornAPI.Replay
+namespace SkylordsRebornAPI.Replay.ReplayKeys
 {
-    public class ActionAttack : AbstractAction
+    public class Attack : AbstractReplayKey
     {
+        public Attack(BinaryReader reader) : base(reader)
+        {
+            ReadData(reader);
+        }
+
         public uint Source { get; set; }
         public List<uint> Units { get; set; }
         public uint Target { get; set; }
@@ -14,7 +19,7 @@ namespace SkylordsRebornAPI.Replay
             Source = reader.ReadUInt32();
             var unitCount = reader.ReadInt16();
             Units = new List<uint>();
-            for (int i = 0; i < unitCount; i++) Units.Add(reader.ReadUInt32());
+            for (var i = 0; i < unitCount; i++) Units.Add(reader.ReadUInt32());
 
             reader.ReadBytes(5);
 
@@ -24,11 +29,6 @@ namespace SkylordsRebornAPI.Replay
             //Value2
             reader.ReadUInt32();
             Target = reader.ReadUInt32();
-        }
-
-        public ActionAttack(BinaryReader reader) : base(reader)
-        {
-            ReadData(reader);
         }
     }
 }

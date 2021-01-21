@@ -83,12 +83,9 @@ namespace SkylordsRebornAPI.Replay
 
             replay.Teams = new List<Team>();
 
-            for (var i = 0; i < amountOfTeams; i++)
-            {
-                replay.Teams.Add(ReadTeam(reader));
-            }
+            for (var i = 0; i < amountOfTeams; i++) replay.Teams.Add(ReadTeam(reader));
 
-            var player = ReadPlayer(reader, out byte groupId);
+            var player = ReadPlayer(reader, out var groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
             ReadActions(reader);
@@ -97,25 +94,24 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        private List<ActionData> ReadActions(BinaryReader reader)
+        private List<AbstractReplayKey> ReadActions(BinaryReader reader)
         {
-            var actions = new List<ActionData>();
+            var replayKeys = new List<AbstractReplayKey>();
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 // The fuck time?
                 var time = reader.ReadUInt32();
                 var size = reader.ReadUInt32();
-                var data = reader.ReadBytes((int) size);
-                actions.Add(new ActionData()
-                {
-                    Data = data,
-                    Time = TimeSpan.FromMilliseconds(time*100)
-                });
+                //
+                //var data = reader.ReadBytes((int) size)
                 Console.WriteLine(size);
                 Console.WriteLine(time);
+                var x = new GodClassReplayKeyHandler();
+                var y = x.Handle((Data.ReplayKeys) reader.ReadInt32(), reader);
+                replayKeys.Add(y);
             }
 
-            return actions;
+            return replayKeys;
         }
 
         private Card ReadCard(BinaryReader reader)
@@ -159,7 +155,7 @@ namespace SkylordsRebornAPI.Replay
             for (var i = 0; i < cardCount; i++)
                 cards.Add(ReadCard(reader));
 
-            return new Player()
+            return new Player
             {
                 Cards = cards,
                 PlayerId = playerId,
@@ -178,7 +174,7 @@ namespace SkylordsRebornAPI.Replay
             var teamId = reader.ReadInt32();
             reader.ReadBytes(2);
 
-            return new Team()
+            return new Team
             {
                 Name = teamName,
                 TeamId = teamId,

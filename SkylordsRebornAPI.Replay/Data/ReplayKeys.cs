@@ -1,6 +1,6 @@
 ﻿namespace SkylordsRebornAPI.Replay.Data
 {
-    public enum Actions
+    public enum ReplayKeys
     {
         Move = 4013,
         Attack = 4015,
