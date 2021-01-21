@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -35,12 +36,12 @@ namespace SkylordsRebornAPI.Replay
             return null;
         }
 
-        public object DecodeNext(BinaryReader reader)
+        public Tuple<Data.ReplayKeys,object> DecodeNext(BinaryReader reader)
         {
             try
             {
                 var key = (Data.ReplayKeys) reader.ReadInt32();
-                return Decode(key, reader);
+                return new Tuple<Data.ReplayKeys, object>(key,Decode(key, reader));
             }
             catch (EndOfStreamException ex)
             {
@@ -49,9 +50,9 @@ namespace SkylordsRebornAPI.Replay
             }
         }
 
-        public List<object> DecodeFile(BinaryReader reader)
+        public List<Tuple<Data.ReplayKeys,object>> DecodeFile(BinaryReader reader)
         {
-            var result = new List<object>();
+            var result = new List<Tuple<Data.ReplayKeys, object>>();
 
             while (reader.BaseStream.Position != reader.BaseStream.Length) result.Add(DecodeNext(reader));
 
