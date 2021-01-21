@@ -2,6 +2,7 @@
 {
     public enum ReplayKeys
     {
+        UnknownA1 = 4001,
         LeaveGame = 4002,
         PveUnknownA6 = 4006,
         PveUnknownA8 = 4008,
