@@ -94,9 +94,9 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        private List<AbstractReplayKey> ReadActions(BinaryReader reader)
+        private List<Tuple<Data.ReplayKeys,object>> ReadActions(BinaryReader reader)
         {
-            var replayKeys = new List<AbstractReplayKey>();
+            var replayKeys = new List<Tuple<Data.ReplayKeys,object>>();
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 // The fuck time?
@@ -106,9 +106,8 @@ namespace SkylordsRebornAPI.Replay
                 //var data = reader.ReadBytes((int) size)
                 Console.WriteLine(size);
                 Console.WriteLine(time);
-                var x = new GodClassReplayKeyHandler();
-                var y = x.Handle((Data.ReplayKeys) reader.ReadInt32(), reader);
-                replayKeys.Add(y);
+                var decoderStore = new DecoderStore();
+                replayKeys = decoderStore.DecodeFile(reader);
             }
 
             return replayKeys;

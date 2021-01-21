@@ -3,31 +3,28 @@ using System.IO;
 
 namespace SkylordsRebornAPI.Replay.ReplayKeys
 {
-    public class Attack : AbstractReplayKey
+    [KeyDecoder(Data.ReplayKeys.Attack)]
+    public class Attack
     {
-        public Attack(BinaryReader reader) : base(reader)
-        {
-            ReadData(reader);
-        }
-
         public uint Source { get; set; }
         public List<uint> Units { get; set; }
         public uint Target { get; set; }
+        public byte[] Unknown { get; set; }
 
-        private void ReadData(BinaryReader reader)
+        public Attack(BinaryReader reader, DecoderStore store)
         {
             Source = reader.ReadUInt32();
             var unitCount = reader.ReadInt16();
             Units = new List<uint>();
             for (var i = 0; i < unitCount; i++) Units.Add(reader.ReadUInt32());
 
-            reader.ReadBytes(5);
+            Unknown = reader.ReadBytes(5 + 8);
 
             //Value1
-            reader.ReadUInt32();
+            //reader.ReadUInt32();
 
             //Value2
-            reader.ReadUInt32();
+            //reader.ReadUInt32();
             Target = reader.ReadUInt32();
         }
     }
