@@ -18,7 +18,7 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
         public byte[] Unknown { get; set; }
         public ushort CardC { get; set; }
         public ushort CardCx { get; set; }
-        public int Charges { get; set; }
+        public byte Charges { get; set; }
 
         public Build(BinaryReader reader, DecoderStore store)
         {
@@ -33,7 +33,7 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             Unknown = reader.ReadBytes(4);
             CardC = reader.ReadUInt16();
             CardCx = reader.ReadUInt16();
-            Charges = reader.ReadInt32();
+            Charges = reader.ReadByte();
         }
     }
 }

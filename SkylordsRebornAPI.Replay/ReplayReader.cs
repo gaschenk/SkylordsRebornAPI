@@ -48,8 +48,10 @@ namespace SkylordsRebornAPI.Replay
             replay.MapPath = Encoding.ASCII.GetString(reader.ReadBytes(reader.ReadInt32()));
             Console.WriteLine("path:" + replay.MapPath);
 
-            //Somewhat useless
+            //Somewhat useless 
+            // It's not equal when the header ends?
             var headerLengthUntilActions = reader.ReadUInt32();
+            Console.WriteLine("headerLengthUntilActions"+headerLengthUntilActions);
 
             reader.ReadBytes(6);
 
@@ -66,17 +68,24 @@ namespace SkylordsRebornAPI.Replay
             //group count??????????????????
             reader.ReadByte();
 
-            /*var matrixLength = reader.ReadInt16();
-            Console.WriteLine(matrixLength);
-            replay.Matrix = new MatrixEntry[matrixLength/3];
-            for (int i = 0; i < matrixLength/3; i++)
+            var matrixLength = reader.ReadInt16();
+            Console.WriteLine("matrixlength: "+matrixLength);
+            replay.Matrix = new List<MatrixEntry>();
+            var length = (matrixLength)/3;
+            Console.WriteLine(length);
+            for (int i = 0; i < length; i++)
             {
-                replay.Matrix[i] = new MatrixEntry(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                replay.Matrix.Add(new MatrixEntry()
+                {
+                    X = reader.ReadByte(),
+                    Y = reader.ReadByte(),
+                    Z = reader.ReadByte()
+                });
             }
             
             //Dumped
-            reader.ReadBytes(77-matrixLength);*/
-            reader.ReadBytes(77);
+            reader.ReadBytes(77-matrixLength-1);
+            //reader.ReadBytes(77-2);
 
             var amountOfTeams = reader.ReadInt16();
             Console.WriteLine("amountOfTeams:" + amountOfTeams);
@@ -88,7 +97,13 @@ namespace SkylordsRebornAPI.Replay
             var player = ReadPlayer(reader, out var groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
+            var time = reader.ReadUInt32();
+            var size = reader.ReadUInt32();
+            Console.WriteLine($"time:{time}");
+            Console.WriteLine($"size:{size}");
+            //reader.BaseStream.Position = headerLengthUntilActions;
             replay.ReplayKeys = ReadActions(reader);
+            Console.WriteLine(replay.ReplayKeys.Count);
 
             return replay;
         }
@@ -97,8 +112,6 @@ namespace SkylordsRebornAPI.Replay
         private List<Tuple<Data.ReplayKeys,object>> ReadActions(BinaryReader reader)
         {
             var replayKeys = new List<Tuple<Data.ReplayKeys,object>>();
-                var time = reader.ReadUInt32();
-                var size = reader.ReadUInt32();
                 try
                 {
                     // The fuck time?
@@ -110,6 +123,7 @@ namespace SkylordsRebornAPI.Replay
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.ToString());
                 }
 
             return replayKeys;
@@ -187,11 +201,5 @@ namespace SkylordsRebornAPI.Replay
         {
             return Encoding.Unicode.GetString(reader.ReadBytes(length * 2));
         }
-    }
-
-    public struct ActionData
-    {
-        public byte[] Data { get; set; }
-        public TimeSpan Time { get; set; }
     }
 }

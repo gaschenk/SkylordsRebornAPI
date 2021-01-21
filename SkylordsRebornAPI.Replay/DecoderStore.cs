@@ -25,16 +25,16 @@ namespace SkylordsRebornAPI.Replay
                 .ToDictionary(x => x.attr.Id, x => x.ctor);
         }
 
-        public object Decode(Data.ReplayKeys key, BinaryReader data)
-        {
-            if (_decoders.TryGetValue(key, out var ctor))
-            {
-                var inst = ctor.Invoke(new object[] {data});
-                return inst;
-            }
-
-            return null;
+        public object Decode(Data.ReplayKeys key, BinaryReader data)  
+        {             
+            if(_decoders.TryGetValue(key, out var ctor)) 
+            {             
+                var inst = ctor.Invoke(new object[] { data, this });             
+                return inst;         
+            }                  
+            return null;     
         }
+
 
         public Tuple<Data.ReplayKeys, object> DecodeNext(BinaryReader reader)
         {
@@ -44,12 +44,13 @@ namespace SkylordsRebornAPI.Replay
 
                 if (!Enum.IsDefined(key))
                 {
-                    Console.WriteLine($"Key doesn't exist {(int) key}");
-                    return null;
+                    //Console.WriteLine($"Key doesn't exist {(int) key}");
+                    return new Tuple<Data.ReplayKeys, object>(key,null);
                 }
                 else
                 {
                     Console.WriteLine($"Key found {(int) key}");
+                    
                     return new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
                 }
                     
@@ -66,12 +67,12 @@ namespace SkylordsRebornAPI.Replay
             var results = new List<Tuple<Data.ReplayKeys, object>>();
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                Console.WriteLine("Current Position "+reader.BaseStream.Position+"/"+reader.BaseStream.Length);
                 var result = DecodeNext(reader);
                 if (result != null)
                     results.Add(result);
-            }
 
+            }
+            // Why the heck does it return/exit the loop when it finds the first Key?
             return results;
         }
     }
