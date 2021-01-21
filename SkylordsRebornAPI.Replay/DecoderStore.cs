@@ -41,9 +41,18 @@ namespace SkylordsRebornAPI.Replay
             try
             {
                 var key = (Data.ReplayKeys) reader.ReadInt32();
-                return !Enum.IsDefined(key)
-                    ? throw new Exception($"Key doesn't exist {(int) key}")
-                    : new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
+
+                if (!Enum.IsDefined(key))
+                {
+                    Console.WriteLine($"Key doesn't exist {(int) key}");
+                    return null;
+                }
+                else
+                {
+                    Console.WriteLine($"Key found {(int) key}");
+                    return new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
+                }
+                    
             }
             catch (EndOfStreamException ex)
             {
@@ -54,11 +63,16 @@ namespace SkylordsRebornAPI.Replay
 
         public List<Tuple<Data.ReplayKeys, object>> DecodeFile(BinaryReader reader)
         {
-            var result = new List<Tuple<Data.ReplayKeys, object>>();
+            var results = new List<Tuple<Data.ReplayKeys, object>>();
+            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            {
+                Console.WriteLine("Current Position "+reader.BaseStream.Position+"/"+reader.BaseStream.Length);
+                var result = DecodeNext(reader);
+                if (result != null)
+                    results.Add(result);
+            }
 
-            while (reader.BaseStream.Position != reader.BaseStream.Length) result.Add(DecodeNext(reader));
-
-            return result;
+            return results;
         }
     }
 }

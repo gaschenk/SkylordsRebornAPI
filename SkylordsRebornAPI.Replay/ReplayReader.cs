@@ -97,18 +97,20 @@ namespace SkylordsRebornAPI.Replay
         private List<Tuple<Data.ReplayKeys,object>> ReadActions(BinaryReader reader)
         {
             var replayKeys = new List<Tuple<Data.ReplayKeys,object>>();
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
-            {
-                // The fuck time?
                 var time = reader.ReadUInt32();
                 var size = reader.ReadUInt32();
-                //
-                //var data = reader.ReadBytes((int) size)
-                Console.WriteLine(size);
-                Console.WriteLine(time);
-                var decoderStore = new DecoderStore();
-                replayKeys = decoderStore.DecodeFile(reader);
-            }
+                try
+                {
+                    // The fuck time?
+                    //
+                    //var data = reader.ReadBytes((int) size)
+                    var decoderStore = new DecoderStore();
+                    replayKeys = decoderStore.DecodeFile(reader);
+
+                }
+                catch (Exception ex)
+                {
+                }
 
             return replayKeys;
         }
