@@ -88,7 +88,7 @@ namespace SkylordsRebornAPI.Replay
             var player = ReadPlayer(reader, out var groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
-            ReadActions(reader);
+            replay.ReplayKeys = ReadActions(reader);
 
             return replay;
         }

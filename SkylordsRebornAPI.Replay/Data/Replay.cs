@@ -11,5 +11,6 @@ namespace SkylordsRebornAPI.Replay.Data
         public uint ReplayRevision { get; set; }
         public string MapPath { get; set; }
         public List<Team> Teams { get; set; }
+        public List<Tuple<ReplayKeys, object>> ReplayKeys { get; set; }
     }
 }
