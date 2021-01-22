@@ -35,14 +35,14 @@ namespace SkylordsRebornAPI.Replay
             replay.ReplayRevision = reader.ReadUInt32();
             Console.WriteLine(replay.ReplayRevision);
 
-            if (replay.ReplayRevision > 200)
+            if (!(replay.ReplayRevision <= 200))
                 // V_gameversion_B7074000:0x407b7
                 reader.ReadBytes(4);
 
             var timeValue = reader.ReadInt32();
             replay.PlayTime = TimeSpan.FromMilliseconds(timeValue * 100);
             Console.WriteLine(replay.PlayTime);
-            if (replay.ReplayRevision >= 218)
+            if (!(replay.ReplayRevision < 218))
                 reader.ReadBytes(4);
 
             replay.MapPath = Encoding.ASCII.GetString(reader.ReadBytes(reader.ReadInt32()));
@@ -60,10 +60,10 @@ namespace SkylordsRebornAPI.Replay
             Console.WriteLine("playersPerTeam" + playersPerTeam);
 
             // some other stupid value
-            reader.ReadBytes(replay.ReplayRevision > 200 ? 2 : 4);
+            reader.ReadBytes(replay.ReplayRevision <= 200 ? 4 : 2);
 
             replay.HostPlayerId = reader.ReadUInt64();
-            Console.WriteLine(replay.HostPlayerId);
+            Console.WriteLine("hostPlayerId"+replay.HostPlayerId);
 
             //group count??????????????????
             reader.ReadByte();
@@ -71,9 +71,8 @@ namespace SkylordsRebornAPI.Replay
             var matrixLength = reader.ReadInt16();
             Console.WriteLine("matrixlength: "+matrixLength);
             replay.Matrix = new List<MatrixEntry>();
-            var length = (matrixLength)/3;
-            Console.WriteLine(length);
-            for (int i = 0; i < length; i++)
+            var pos = 0;
+            while(pos <matrixLength)
             {
                 replay.Matrix.Add(new MatrixEntry()
                 {
@@ -81,11 +80,21 @@ namespace SkylordsRebornAPI.Replay
                     Y = reader.ReadByte(),
                     Z = reader.ReadByte()
                 });
+                pos += 3;
             }
-            
-            //Dumped
-            reader.ReadBytes(77-matrixLength-1);
-            //reader.ReadBytes(77-2);
+            var headerLength = reader.ReadUInt16()-1;
+            replay.ShitHeaders = new List<ShitHeader>();
+            Console.WriteLine("headerLength"+headerLength);
+            /*
+            pos = 0;
+            while(pos <headerLength)
+            {
+                replay.ShitHeaders.Add(ReadShitHeader(reader, replay.ReplayRevision, out int length));
+                pos += length;
+            }*/
+            Console.WriteLine("position"+pos+"/"+headerLength);
+            //reader.ReadBytes(70);
+            //reader.ReadBytes(70);
 
             var amountOfTeams = reader.ReadInt16();
             Console.WriteLine("amountOfTeams:" + amountOfTeams);
@@ -97,11 +106,23 @@ namespace SkylordsRebornAPI.Replay
             var player = ReadPlayer(reader, out var groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
+            
             //reader.BaseStream.Position=headerLengthUntilActions;
             replay.ReplayKeys = ReadActions(reader);
             Console.WriteLine(replay.ReplayKeys.Count);
 
             return replay;
+        }
+
+        public ShitHeader ReadShitHeader(BinaryReader reader, uint revision, out int length)
+        {
+            var shitHeader = new ShitHeader();
+            shitHeader.GroupId = reader.ReadUInt32();
+            length = (revision <= 200 ? 3 : 2);
+            reader.ReadBytes(length);
+            length += 4;
+            return shitHeader;
+            
         }
 
 
@@ -197,5 +218,11 @@ namespace SkylordsRebornAPI.Replay
         {
             return Encoding.Unicode.GetString(reader.ReadBytes(length * 2));
         }
+    }
+    public struct ShitHeader
+    {
+        public uint GroupId { get; set; }
+
+        public byte[] Unknown { get; set; }
     }
 }

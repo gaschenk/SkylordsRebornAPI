@@ -12,6 +12,7 @@ namespace SkylordsRebornAPI.Replay.Data
         public string MapPath { get; set; }
         public List<Team> Teams { get; set; }
         public List<Tuple<ReplayKeys, object>> ReplayKeys { get; set; }
+        public List<ShitHeader> ShitHeaders { get; internal set; }
     }
 
     public class MatrixEntry
