@@ -79,7 +79,6 @@ namespace SkylordsRebornAPI.Replay
                     results.Add(result);
 
             }
-            // Why the heck does it return/exit the loop when it finds the first Key?
             return results;
         }
     }
