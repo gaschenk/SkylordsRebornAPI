@@ -27,9 +27,10 @@ namespace SkylordsRebornAPI.Replay
 
         public object Decode(Data.ReplayKeys key, BinaryReader data)  
         {             
-            if(_decoders.TryGetValue(key, out var ctor)) 
-            {             
-                var inst = ctor.Invoke(new object[] { data, this });             
+            if(_decoders.TryGetValue(key, out var ctor))
+            {
+                var length = data.BaseStream.Position;
+                var inst = ctor.Invoke(new object[] { data, this }); 
                 return inst;         
             }                  
             return null;     
@@ -40,18 +41,24 @@ namespace SkylordsRebornAPI.Replay
         {
             try
             {
+                var time = reader.ReadUInt32();
+                var size = reader.ReadUInt32();
+                Console.WriteLine($"time:{time}");
+                Console.WriteLine($"size:{size}");
+                var position = reader.BaseStream.Position;
                 var key = (Data.ReplayKeys) reader.ReadInt32();
 
                 if (!Enum.IsDefined(key))
                 {
-                    //Console.WriteLine($"Key doesn't exist {(int) key}");
+                    Console.WriteLine($"Key doesn't exist {(int) key} ");
                     return null; //new Tuple<Data.ReplayKeys, object>(key,null);
                 }
                 else
                 {
-                    Console.WriteLine($"Key found {(int) key}");
-                    
-                    return new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
+                    Console.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
+                    var result = new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
+                    reader.BaseStream.Position = position + size;
+                    return result;
                 }
                     
             }

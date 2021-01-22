@@ -15,8 +15,8 @@
         Attack = 4015,
         StopUnit = 4019,
         HoldPositionUnit = 4020,
-        UnknownBb= 4027,
-        ToggleWallGate =4028,
+        UnknownBb = 4027,
+        ToggleWallGate = 4028,
         BuildWall = 4029,
         CreateMana = 4030,
         CreateOrb = 4031,
@@ -24,6 +24,6 @@
         UnknownC2 = 4034,
         AbilityC3 = 4035,
         DestructC9 = 4041,
-        PveUnknownCb =4043
+        PveUnknownCb = 4043
     }
 }

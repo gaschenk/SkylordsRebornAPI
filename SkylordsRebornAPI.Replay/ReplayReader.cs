@@ -97,11 +97,7 @@ namespace SkylordsRebornAPI.Replay
             var player = ReadPlayer(reader, out var groupId);
 
             replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
-            var time = reader.ReadUInt32();
-            var size = reader.ReadUInt32();
-            Console.WriteLine($"time:{time}");
-            Console.WriteLine($"size:{size}");
-            //reader.BaseStream.Position = headerLengthUntilActions;
+            //reader.BaseStream.Position=headerLengthUntilActions;
             replay.ReplayKeys = ReadActions(reader);
             Console.WriteLine(replay.ReplayKeys.Count);
 
