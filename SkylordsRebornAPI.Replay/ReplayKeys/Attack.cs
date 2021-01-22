@@ -26,6 +26,15 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             //Value2
             //reader.ReadUInt32();
             Target = reader.ReadUInt32();
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            Unknown1 = reader.ReadByte();
         }
+
+        public byte Unknown1 { get; set; }
+
+        public float X { get; set; }
+
+        public float Y { get; set; }
     }
 }

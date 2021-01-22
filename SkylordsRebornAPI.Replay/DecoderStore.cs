@@ -45,7 +45,7 @@ namespace SkylordsRebornAPI.Replay
                 if (!Enum.IsDefined(key))
                 {
                     //Console.WriteLine($"Key doesn't exist {(int) key}");
-                    return new Tuple<Data.ReplayKeys, object>(key,null);
+                    return null; //new Tuple<Data.ReplayKeys, object>(key,null);
                 }
                 else
                 {

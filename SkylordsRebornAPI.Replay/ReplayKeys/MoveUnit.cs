@@ -9,7 +9,7 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
     {
         public MoveUnit(BinaryReader reader, DecoderStore store)
         {
-            Target = reader.ReadUInt32();
+            Source = reader.ReadUInt32();
             var count = reader.ReadUInt16();
             Units = new List<uint>();
             for (int i = 0; i < count; i++)
@@ -31,6 +31,6 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
 
         public List<uint> Units { get; set; }
 
-        public uint Target { get; set; }
+        public uint Source { get; set; }
     }
 }

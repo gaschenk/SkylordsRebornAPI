@@ -9,12 +9,10 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
 
         public ushort CardX { get; set; }
         public uint Source { get; set; }
-        public byte Unknown { get; set; }
         public ushort CardC { get; set; }
         public ushort CardCx { get; set; }
         public byte Charges { get; set; }
         public byte[] Unknown1 { get; set; }
-        public uint Target { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
         public byte[] Unknown2 { get; set; }
@@ -28,10 +26,9 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             Card = reader.ReadUInt16();
             CardX = reader.ReadUInt16();
             Source = reader.ReadUInt32();
-            Unknown = reader.ReadByte();
+            Charges = reader.ReadByte();
             CardC = reader.ReadUInt16();
             CardCx = reader.ReadUInt16();
-            Charges = reader.ReadByte();
             Unknown1 = reader.ReadBytes(18);
             X = reader.ReadSingle();
             Y = reader.ReadSingle();

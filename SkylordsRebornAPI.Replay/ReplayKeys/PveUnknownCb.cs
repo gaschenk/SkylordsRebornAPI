@@ -15,7 +15,11 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             {
                 Units.Add(reader.ReadUInt32());
             }
+
+            Target = reader.ReadUInt32();
         }
+
+        public uint Target { get; set; }
 
         public List<uint> Units { get; set; }
 

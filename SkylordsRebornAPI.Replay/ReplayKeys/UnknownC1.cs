@@ -15,8 +15,6 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             {
                 Units.Add(reader.ReadUInt32());
             }
-
-            Color = reader.ReadByte();
             Unknown = reader.ReadBytes(8);
         }
 
