@@ -39,30 +39,29 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        public Tuple<Data.ReplayKeys, object> DecodeNext(BinaryReader reader)
+        public Tuple<TimeSpan, Data.ReplayKeys, object> DecodeNext(BinaryReader reader)
         {
             try
             {
                 var time = reader.ReadUInt32();
                 var size = reader.ReadUInt32();
-                Console.WriteLine($"time:{time}");
-                Console.WriteLine($"size:{size}");
                 var position = reader.BaseStream.Position;
                 var key = (Data.ReplayKeys) reader.ReadInt32();
 
                 if (!Enum.IsDefined(key))
                 {
-                    Console.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
+                    Debug.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
                     var result =
-                        new Tuple<Data.ReplayKeys, object>(key,
+                        new Tuple<TimeSpan, Data.ReplayKeys, object>(TimeSpan.FromMilliseconds(time) * 100, key,
                             HandleUnhandled(reader, (int) size)); //new Tuple<Data.ReplayKeys, object>(key,null);
                     reader.BaseStream.Position = position + size;
                     return result;
                 }
                 else
                 {
-                    Console.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
-                    var result = new Tuple<Data.ReplayKeys, object>(key, Decode(key, reader));
+                    Debug.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
+                    var result = new Tuple<TimeSpan, Data.ReplayKeys, object>(TimeSpan.FromMilliseconds(time) * 100,
+                        key, Decode(key, reader));
                     reader.BaseStream.Position = position + size;
                     return result;
                 }
@@ -82,9 +81,9 @@ namespace SkylordsRebornAPI.Replay
             };
         }
 
-        public List<Tuple<Data.ReplayKeys, object>> DecodeFile(BinaryReader reader)
+        public List<Tuple<TimeSpan, Data.ReplayKeys, object>> DecodeFile(BinaryReader reader)
         {
-            var results = new List<Tuple<Data.ReplayKeys, object>>();
+            var results = new List<Tuple<TimeSpan, Data.ReplayKeys, object>>();
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 var result = DecodeNext(reader);

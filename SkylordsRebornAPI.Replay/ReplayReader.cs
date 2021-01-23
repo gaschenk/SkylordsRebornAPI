@@ -103,9 +103,9 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        private List<Tuple<Data.ReplayKeys, object>> ReadActions(BinaryReader reader)
+        private List<Tuple<TimeSpan, Data.ReplayKeys, object>> ReadActions(BinaryReader reader)
         {
-            var replayKeys = new List<Tuple<Data.ReplayKeys, object>>();
+            var replayKeys = new List<Tuple<TimeSpan, Data.ReplayKeys, object>>();
             try
             {
                 // The fuck time?
