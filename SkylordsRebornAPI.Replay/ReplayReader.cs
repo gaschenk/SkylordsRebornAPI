@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,8 +21,8 @@ namespace SkylordsRebornAPI.Replay
 
                 if (Encoding.UTF8.GetString(sanityCheck) == "PMV")
                 {
-                    var replay = ReadMetaInformation(reader);
-
+                    //var replay = ReadMetaInformation(reader);
+                    var replay = ReadInformation(reader);
                     return replay;
                 }
 
@@ -29,119 +30,98 @@ namespace SkylordsRebornAPI.Replay
             }
         }
 
-        public Data.Replay ReadMetaInformation(BinaryReader reader)
+
+        public Data.Replay ReadInformation(BinaryReader reader)
         {
             var replay = new Data.Replay();
+
             replay.ReplayRevision = reader.ReadUInt32();
-            Console.WriteLine(replay.ReplayRevision);
 
-            if (!(replay.ReplayRevision <= 200))
-                // V_gameversion_B7074000:0x407b7
-                reader.ReadBytes(4);
+            replay.GameVersion = 0;
 
-            var timeValue = reader.ReadInt32();
-            replay.PlayTime = TimeSpan.FromMilliseconds(timeValue * 100);
-            Console.WriteLine(replay.PlayTime);
-            if (!(replay.ReplayRevision < 218))
+            if (replay.ReplayRevision > 200)
+                replay.GameVersion = reader.ReadUInt32();
+
+            replay.PlayTime = TimeSpan.FromMilliseconds(reader.ReadUInt32() * 100);
+
+            // "header_new_dummy" dropped
+            if (replay.ReplayRevision > 200)
                 reader.ReadBytes(4);
 
             replay.MapPath = Encoding.ASCII.GetString(reader.ReadBytes(reader.ReadInt32()));
-            Console.WriteLine("path:" + replay.MapPath);
 
-            //Somewhat useless 
-            // It's not equal when the header ends?
-            var headerLengthUntilActions = reader.ReadUInt32();
-            Console.WriteLine("headerLengthUntilActions"+headerLengthUntilActions);
+            var headerSizeUntilActions = reader.ReadUInt32() + reader.BaseStream.Position;
 
-            reader.ReadBytes(6);
-
-            //Useless outside of pvp? well even then rather useless.
-            var playersPerTeam = reader.ReadByte();
-            Console.WriteLine("playersPerTeam" + playersPerTeam);
-
-            // some other stupid value
-            reader.ReadBytes(replay.ReplayRevision <= 200 ? 4 : 2);
+            // Dumping: v_7 players_per_team v_0200
+            reader.ReadBytes(2 + 4 + 1 + 2);
 
             replay.HostPlayerId = reader.ReadUInt64();
-            Console.WriteLine("hostPlayerId"+replay.HostPlayerId);
 
-            //group count??????????????????
-            reader.ReadByte();
+            var groupCount = reader.ReadByte();
 
-            var matrixLength = reader.ReadInt16();
-            Console.WriteLine("matrixlength: "+matrixLength);
-            replay.Matrix = new List<MatrixEntry>();
-            var pos = 0;
-            while(pos <matrixLength)
+            var matrixLength = reader.ReadUInt16();
+
+            replay.Matrix = new();
+
+            // "contains who is allied to which player"?
+            for (int i = 0; i < matrixLength; i++)
             {
-                replay.Matrix.Add(new MatrixEntry()
+                replay.Matrix.Add(new MatrixEntry
                 {
                     X = reader.ReadByte(),
                     Y = reader.ReadByte(),
-                    Z = reader.ReadByte()
+                    Z = reader.ReadByte(),
                 });
-                pos += 3;
             }
-            var headerLength = reader.ReadUInt16()-1;
-            replay.ShitHeaders = new List<ShitHeader>();
-            Console.WriteLine("headerLength"+headerLength);
-            /*
-            pos = 0;
-            while(pos <headerLength)
-            {
-                replay.ShitHeaders.Add(ReadShitHeader(reader, replay.ReplayRevision, out int length));
-                pos += length;
-            }*/
-            Console.WriteLine("position"+pos+"/"+headerLength);
-            //reader.ReadBytes(70);
-            //reader.ReadBytes(70);
 
-            var amountOfTeams = reader.ReadInt16();
-            Console.WriteLine("amountOfTeams:" + amountOfTeams);
+            replay.Teams = new();
 
-            replay.Teams = new List<Team>();
-
-            for (var i = 0; i < amountOfTeams; i++) replay.Teams.Add(ReadTeam(reader));
-
-            var player = ReadPlayer(reader, out var groupId);
-
-            replay.Teams.First(team => team.TeamId == groupId).Players.Add(player);
+            var amountOfTeams = reader.ReadUInt16();
             
-            //reader.BaseStream.Position=headerLengthUntilActions;
-            replay.ReplayKeys = ReadActions(reader);
-            Console.WriteLine(replay.ReplayKeys.Count);
+            Console.WriteLine(amountOfTeams);
 
+            for (int i = 0; i < amountOfTeams; i++)
+            {
+                var length = reader.ReadInt32();
+                replay.Teams.Add(new Team()
+                {
+                    Name = Encoding.ASCII.GetString(reader.ReadBytes(length)),
+                    TeamId = reader.ReadInt32(),
+                    Players = new List<Player>(),
+                    // NOT AN NPC FLAG FFS
+                    Unknown = reader.ReadBytes(2)
+                });
+
+            }
+
+            while (reader.BaseStream.Position < headerSizeUntilActions)
+            {
+                var player = ReadPlayer(reader, out byte teamId);
+                
+                replay.Teams.First(team => team.TeamId == teamId).Players.Add(player);
+            }
+
+            replay.ReplayKeys = ReadActions(reader);
+            
             return replay;
         }
 
-        public ShitHeader ReadShitHeader(BinaryReader reader, uint revision, out int length)
+
+        private List<Tuple<Data.ReplayKeys, object>> ReadActions(BinaryReader reader)
         {
-            var shitHeader = new ShitHeader();
-            shitHeader.GroupId = reader.ReadUInt32();
-            length = (revision <= 200 ? 3 : 2);
-            reader.ReadBytes(length);
-            length += 4;
-            return shitHeader;
-            
-        }
-
-
-        private List<Tuple<Data.ReplayKeys,object>> ReadActions(BinaryReader reader)
-        {
-            var replayKeys = new List<Tuple<Data.ReplayKeys,object>>();
-                try
-                {
-                    // The fuck time?
-                    //
-                    //var data = reader.ReadBytes((int) size)
-                    var decoderStore = new DecoderStore();
-                    replayKeys = decoderStore.DecodeFile(reader);
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
+            var replayKeys = new List<Tuple<Data.ReplayKeys, object>>();
+            try
+            {
+                // The fuck time?
+                //
+                //var data = reader.ReadBytes((int) size)
+                var decoderStore = new DecoderStore();
+                replayKeys = decoderStore.DecodeFile(reader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             return replayKeys;
         }
@@ -191,6 +171,7 @@ namespace SkylordsRebornAPI.Replay
             {
                 Cards = cards,
                 PlayerId = playerId,
+                TeamSlot = subgroupId,
                 Name = name
             };
         }
@@ -198,7 +179,7 @@ namespace SkylordsRebornAPI.Replay
         private Team ReadTeam(BinaryReader reader)
         {
             var length = reader.ReadInt32();
-            Console.WriteLine(length);
+            Console.WriteLine("teamNamelength: "+length);
 
             var teamName = Encoding.ASCII.GetString(reader.ReadBytes(length));
             Console.WriteLine(teamName);
@@ -218,11 +199,5 @@ namespace SkylordsRebornAPI.Replay
         {
             return Encoding.Unicode.GetString(reader.ReadBytes(length * 2));
         }
-    }
-    public struct ShitHeader
-    {
-        public uint GroupId { get; set; }
-
-        public byte[] Unknown { get; set; }
     }
 }

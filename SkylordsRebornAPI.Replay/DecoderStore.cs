@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SkylordsRebornAPI.Replay.ReplayKeys;
 
 namespace SkylordsRebornAPI.Replay
 {
@@ -50,8 +51,10 @@ namespace SkylordsRebornAPI.Replay
 
                 if (!Enum.IsDefined(key))
                 {
-                    Console.WriteLine($"Key doesn't exist {(int) key} ");
-                    return null; //new Tuple<Data.ReplayKeys, object>(key,null);
+                    Console.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
+                    var result = new Tuple<Data.ReplayKeys, object>(key,HandleUnhandled(reader,(int)size)); //new Tuple<Data.ReplayKeys, object>(key,null);
+                    reader.BaseStream.Position = position + size;
+                    return result;
                 }
                 else
                 {
@@ -67,6 +70,14 @@ namespace SkylordsRebornAPI.Replay
                 Debug.WriteLine(ex);
                 return null;
             }
+        }
+
+        private Unhandled HandleUnhandled(BinaryReader reader, int size)
+        {
+            return new Unhandled()
+            {
+                Unknown = reader.ReadBytes(size)
+            };
         }
 
         public List<Tuple<Data.ReplayKeys, object>> DecodeFile(BinaryReader reader)

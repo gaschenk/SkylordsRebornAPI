@@ -8,5 +8,6 @@ namespace SkylordsRebornAPI.Replay.Data
         public int TeamId { get; set; }
 
         public List<Player> Players { get; set; }
+        public byte[] Unknown { get; set; }
     }
 }
