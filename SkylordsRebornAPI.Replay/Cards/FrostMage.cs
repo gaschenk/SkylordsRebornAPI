@@ -12,7 +12,6 @@ namespace SkylordsRebornAPI.Replay.Cards
     {
         public FrostMage(CultureInfo cultureInfo) : base(cultureInfo)
         {
-            // TODO Set Name & Description according to language
             Rarity = Rarity.Uncommon;
             Energy = new ushort[] {60};
             CardType = CardType.Creature;
