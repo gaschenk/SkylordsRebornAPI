@@ -75,8 +75,6 @@ namespace SkylordsRebornAPI.Replay
 
             var amountOfTeams = reader.ReadUInt16();
 
-            Console.WriteLine(amountOfTeams);
-
             for (var i = 0; i < amountOfTeams; i++)
             {
                 var length = reader.ReadInt32();
@@ -103,9 +101,9 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        private List<Tuple<TimeSpan, Data.ReplayKeys, object>> ReadActions(BinaryReader reader)
+        private List<ReplayKey> ReadActions(BinaryReader reader)
         {
-            var replayKeys = new List<Tuple<TimeSpan, Data.ReplayKeys, object>>();
+            var replayKeys = new List<ReplayKey>();
             try
             {
                 // The fuck time?
@@ -137,27 +135,20 @@ namespace SkylordsRebornAPI.Replay
         private Player ReadPlayer(BinaryReader reader, out byte groupId)
         {
             var name = ReadName(reader, reader.ReadInt32());
-            Console.WriteLine($"name:{name}");
 
             var playerId = reader.ReadUInt64();
-            Console.WriteLine("PlayerID:" + playerId);
 
             groupId = reader.ReadByte();
-            Console.WriteLine("groupId:" + groupId);
 
             // Useless?
             var subgroupId = reader.ReadByte();
-            Console.WriteLine("subgroupId:" + subgroupId);
 
             var deckType = reader.ReadByte();
-            Console.WriteLine("deckType:" + deckType);
 
             var cardCount = reader.ReadByte();
-            Console.WriteLine("cardCount:" + cardCount);
 
             //Whatever this is
             var anotherCardCount = reader.ReadByte();
-            Console.WriteLine("anotherCardCount:" + anotherCardCount);
 
             var cards = new List<Card>();
             for (var i = 0; i < cardCount; i++)
@@ -175,10 +166,8 @@ namespace SkylordsRebornAPI.Replay
         private Team ReadTeam(BinaryReader reader)
         {
             var length = reader.ReadInt32();
-            Console.WriteLine("teamNamelength: " + length);
 
             var teamName = Encoding.ASCII.GetString(reader.ReadBytes(length));
-            Console.WriteLine(teamName);
 
             var teamId = reader.ReadInt32();
             reader.ReadBytes(2);

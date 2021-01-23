@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SkylordsRebornAPI.Replay.Data;
 using SkylordsRebornAPI.Replay.ReplayKeys;
 
 namespace SkylordsRebornAPI.Replay
@@ -39,7 +40,7 @@ namespace SkylordsRebornAPI.Replay
         }
 
 
-        public Tuple<TimeSpan, Data.ReplayKeys, object> DecodeNext(BinaryReader reader)
+        public Data.ReplayKey DecodeNext(BinaryReader reader)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace SkylordsRebornAPI.Replay
                 {
                     Debug.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
                     var result =
-                        new Tuple<TimeSpan, Data.ReplayKeys, object>(TimeSpan.FromMilliseconds(time) * 100, key,
+                        new ReplayKey(TimeSpan.FromMilliseconds(time) * 100, key,
                             HandleUnhandled(reader, (int) size)); //new Tuple<Data.ReplayKeys, object>(key,null);
                     reader.BaseStream.Position = position + size;
                     return result;
@@ -60,7 +61,7 @@ namespace SkylordsRebornAPI.Replay
                 else
                 {
                     Debug.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
-                    var result = new Tuple<TimeSpan, Data.ReplayKeys, object>(TimeSpan.FromMilliseconds(time) * 100,
+                    var result = new ReplayKey(TimeSpan.FromMilliseconds(time) * 100,
                         key, Decode(key, reader));
                     reader.BaseStream.Position = position + size;
                     return result;
@@ -69,8 +70,9 @@ namespace SkylordsRebornAPI.Replay
             catch (EndOfStreamException ex)
             {
                 Debug.WriteLine(ex);
-                return null;
             }
+
+            return new ReplayKey(TimeSpan.Zero, (Data.ReplayKeys) (-1), null);
         }
 
         private Unhandled HandleUnhandled(BinaryReader reader, int size)
@@ -81,14 +83,13 @@ namespace SkylordsRebornAPI.Replay
             };
         }
 
-        public List<Tuple<TimeSpan, Data.ReplayKeys, object>> DecodeFile(BinaryReader reader)
+        public List<ReplayKey> DecodeFile(BinaryReader reader)
         {
-            var results = new List<Tuple<TimeSpan, Data.ReplayKeys, object>>();
+            var results = new List<ReplayKey>();
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 var result = DecodeNext(reader);
-                if (result != null)
-                    results.Add(result);
+                results.Add(result);
             }
 
             return results;
