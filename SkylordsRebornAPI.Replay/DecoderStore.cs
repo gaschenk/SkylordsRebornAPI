@@ -26,15 +26,16 @@ namespace SkylordsRebornAPI.Replay
                 .ToDictionary(x => x.attr.Id, x => x.ctor);
         }
 
-        public object Decode(Data.ReplayKeys key, BinaryReader data)  
-        {             
-            if(_decoders.TryGetValue(key, out var ctor))
+        public object Decode(Data.ReplayKeys key, BinaryReader data)
+        {
+            if (_decoders.TryGetValue(key, out var ctor))
             {
                 var length = data.BaseStream.Position;
-                var inst = ctor.Invoke(new object[] { data, this }); 
-                return inst;         
-            }                  
-            return null;     
+                var inst = ctor.Invoke(new object[] {data, this});
+                return inst;
+            }
+
+            return null;
         }
 
 
@@ -52,7 +53,9 @@ namespace SkylordsRebornAPI.Replay
                 if (!Enum.IsDefined(key))
                 {
                     Console.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
-                    var result = new Tuple<Data.ReplayKeys, object>(key,HandleUnhandled(reader,(int)size)); //new Tuple<Data.ReplayKeys, object>(key,null);
+                    var result =
+                        new Tuple<Data.ReplayKeys, object>(key,
+                            HandleUnhandled(reader, (int) size)); //new Tuple<Data.ReplayKeys, object>(key,null);
                     reader.BaseStream.Position = position + size;
                     return result;
                 }
@@ -63,7 +66,6 @@ namespace SkylordsRebornAPI.Replay
                     reader.BaseStream.Position = position + size;
                     return result;
                 }
-                    
             }
             catch (EndOfStreamException ex)
             {
@@ -74,7 +76,7 @@ namespace SkylordsRebornAPI.Replay
 
         private Unhandled HandleUnhandled(BinaryReader reader, int size)
         {
-            return new Unhandled()
+            return new()
             {
                 Unknown = reader.ReadBytes(size)
             };
@@ -88,8 +90,8 @@ namespace SkylordsRebornAPI.Replay
                 var result = DecodeNext(reader);
                 if (result != null)
                     results.Add(result);
-
             }
+
             return results;
         }
     }

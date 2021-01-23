@@ -3,14 +3,9 @@
 namespace SkylordsRebornAPI.Replay.ReplayKeys
 {
     [KeyDecoder(Data.ReplayKeys.UseUnitAbility)]
-    public class UseUnitAbility{
-        
-        public ushort Card { get; set; }
-
-        public ushort CardX { get; set; }
-        public uint Source { get; set; }
-        public uint SourceUnit { get; set; }
-        public UseUnitAbility(BinaryReader reader,DecoderStore store)
+    public class UseUnitAbility
+    {
+        public UseUnitAbility(BinaryReader reader, DecoderStore store)
         {
             Source = reader.ReadUInt32();
             SourceUnit = reader.ReadUInt32();
@@ -23,6 +18,12 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             X = reader.ReadSingle();
             Y = reader.ReadSingle();
         }
+
+        public ushort Card { get; set; }
+
+        public ushort CardX { get; set; }
+        public uint Source { get; set; }
+        public uint SourceUnit { get; set; }
 
         public float Y { get; set; }
 

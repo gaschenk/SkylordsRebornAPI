@@ -15,12 +15,4 @@ namespace SkylordsRebornAPI.Replay.Data
         public uint GameVersion { get; set; }
         public byte[] UnknownMapData { get; set; }
     }
-
-    public class MatrixEntry
-    {
-        public byte X { get; set; }
-        public byte Y { get; set; }
-        public byte Z { get; set; }
-        
-    }
 }

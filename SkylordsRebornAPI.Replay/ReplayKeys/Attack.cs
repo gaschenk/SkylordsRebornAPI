@@ -6,11 +6,6 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
     [KeyDecoder(Data.ReplayKeys.Attack)]
     public class Attack
     {
-        public uint Source { get; set; }
-        public List<uint> Units { get; set; }
-        public uint Target { get; set; }
-        public byte[] Unknown { get; set; }
-
         public Attack(BinaryReader reader, DecoderStore store)
         {
             Source = reader.ReadUInt32();
@@ -30,6 +25,11 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             Y = reader.ReadSingle();
             Unknown1 = reader.ReadByte();
         }
+
+        public uint Source { get; set; }
+        public List<uint> Units { get; set; }
+        public uint Target { get; set; }
+        public byte[] Unknown { get; set; }
 
         public byte Unknown1 { get; set; }
 

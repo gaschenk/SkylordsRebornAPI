@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -61,29 +60,27 @@ namespace SkylordsRebornAPI.Replay
 
             var matrixLength = reader.ReadUInt16();
 
-            replay.Matrix = new();
+            replay.Matrix = new List<MatrixEntry>();
 
             // "contains who is allied to which player"?
-            for (int i = 0; i < matrixLength; i++)
-            {
+            for (var i = 0; i < matrixLength; i++)
                 replay.Matrix.Add(new MatrixEntry
                 {
                     X = reader.ReadByte(),
                     Y = reader.ReadByte(),
-                    Z = reader.ReadByte(),
+                    Z = reader.ReadByte()
                 });
-            }
 
-            replay.Teams = new();
+            replay.Teams = new List<Team>();
 
             var amountOfTeams = reader.ReadUInt16();
-            
+
             Console.WriteLine(amountOfTeams);
 
-            for (int i = 0; i < amountOfTeams; i++)
+            for (var i = 0; i < amountOfTeams; i++)
             {
                 var length = reader.ReadInt32();
-                replay.Teams.Add(new Team()
+                replay.Teams.Add(new Team
                 {
                     Name = Encoding.ASCII.GetString(reader.ReadBytes(length)),
                     TeamId = reader.ReadInt32(),
@@ -91,18 +88,17 @@ namespace SkylordsRebornAPI.Replay
                     // NOT AN NPC FLAG FFS
                     Unknown = reader.ReadBytes(2)
                 });
-
             }
 
             while (reader.BaseStream.Position < headerSizeUntilActions)
             {
-                var player = ReadPlayer(reader, out byte teamId);
-                
+                var player = ReadPlayer(reader, out var teamId);
+
                 replay.Teams.First(team => team.TeamId == teamId).Players.Add(player);
             }
 
             replay.ReplayKeys = ReadActions(reader);
-            
+
             return replay;
         }
 
@@ -179,7 +175,7 @@ namespace SkylordsRebornAPI.Replay
         private Team ReadTeam(BinaryReader reader)
         {
             var length = reader.ReadInt32();
-            Console.WriteLine("teamNamelength: "+length);
+            Console.WriteLine("teamNamelength: " + length);
 
             var teamName = Encoding.ASCII.GetString(reader.ReadBytes(length));
             Console.WriteLine(teamName);

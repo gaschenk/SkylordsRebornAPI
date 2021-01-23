@@ -1,25 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.IO;
+﻿using System.IO;
 
 namespace SkylordsRebornAPI.Replay.ReplayKeys
 {
     [KeyDecoder(Data.ReplayKeys.Build)]
     public class Build
     {
-        public ushort Card { get; set; }
-
-        public ushort CardX { get; set; }
-        public uint Source { get; set; }
-        public ushort CardB { get; set; }
-        public ushort CardBx { get; set; }
-        public float X { get; set; }
-        public float Z { get; set; }
-        public float Y { get; set; }
-        public byte[] Unknown { get; set; }
-        public ushort CardC { get; set; }
-        public ushort CardCx { get; set; }
-        public byte Charges { get; set; }
-
         public Build(BinaryReader reader, DecoderStore store)
         {
             Card = reader.ReadUInt16();
@@ -35,5 +20,19 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             CardCx = reader.ReadUInt16();
             Charges = reader.ReadByte();
         }
+
+        public ushort Card { get; set; }
+
+        public ushort CardX { get; set; }
+        public uint Source { get; set; }
+        public ushort CardB { get; set; }
+        public ushort CardBx { get; set; }
+        public float X { get; set; }
+        public float Z { get; set; }
+        public float Y { get; set; }
+        public byte[] Unknown { get; set; }
+        public ushort CardC { get; set; }
+        public ushort CardCx { get; set; }
+        public byte Charges { get; set; }
     }
 }

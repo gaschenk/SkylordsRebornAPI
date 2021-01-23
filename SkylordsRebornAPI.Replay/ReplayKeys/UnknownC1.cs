@@ -11,10 +11,7 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             Source = reader.ReadUInt32();
             var count = reader.ReadInt16();
             Units = new List<uint>();
-            for (int i = 0; i < count; i++)
-            {
-                Units.Add(reader.ReadUInt32());
-            }
+            for (var i = 0; i < count; i++) Units.Add(reader.ReadUInt32());
             Unknown = reader.ReadBytes(8);
         }
 
