@@ -17,9 +17,6 @@ namespace SkylordsRebornAPI.Replay.Cards
             CardType = CardType.Creature;
             OrbColors = new[] {OrbColor.Frost};
         }
-
-        public override string Name { get; protected set; }
-        public override string Description { get; protected set; }
         public override Rarity Rarity { get; protected set; }
         public override ushort[] Energy { get; protected set; }
         public override CardType CardType { get; protected set; }
