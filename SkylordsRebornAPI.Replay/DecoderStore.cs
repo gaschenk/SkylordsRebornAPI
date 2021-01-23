@@ -46,6 +46,8 @@ namespace SkylordsRebornAPI.Replay
             {
                 var time = reader.ReadUInt32();
                 var size = reader.ReadUInt32();
+                Debug.WriteLine("time: "+time);
+                Debug.WriteLine("size: "+size);
                 var position = reader.BaseStream.Position;
                 var key = (Data.ReplayKeys) reader.ReadInt32();
 
@@ -63,7 +65,58 @@ namespace SkylordsRebornAPI.Replay
                     Debug.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
                     var result = new ReplayKey(TimeSpan.FromMilliseconds(time) * 100,
                         key, Decode(key, reader));
+                    var possibleLength = reader.BaseStream.Position - (position - size);
+                    if (reader.BaseStream.Position > position + size)
+                    {
+                        Debug.WriteLine("Exceeded length by "+(possibleLength)+"bytes");
+                    }else if (reader.BaseStream.Position < position + size)
+                    {
+                        Debug.WriteLine("lost length by "+(possibleLength)+"bytes");
+                        //result.SubKey = DecodeSubNext(reader, possibleLength);
+                        Debug.WriteLine(BitConverter.ToString(reader.ReadBytes((int) possibleLength)));
+                    }
                     reader.BaseStream.Position = position + size;
+                    return result;
+                }
+            }
+            catch (EndOfStreamException ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return new ReplayKey(TimeSpan.Zero, (Data.ReplayKeys) (-1), null);
+        }
+
+        private ReplayKey DecodeSubNext(BinaryReader reader, int remainingLength, ReplayKey originalKey)
+        {
+            try
+            {
+                var key = (Data.ReplayKeys) reader.ReadInt32();
+                var position = reader.BaseStream.Position;
+
+                if (!Enum.IsDefined(key))
+                {
+                    Debug.WriteLine($"Key doesn't exist {(int) key} @ length {reader.BaseStream.Position}");
+                    var result =
+                        new ReplayKey(originalKey.TimeStamp, key,
+                            HandleUnhandled(reader, (int) remainingLength)); //new Tuple<Data.ReplayKeys, object>(key,null);
+                    return result;
+                }
+                else
+                {
+                    Debug.WriteLine($"Key found {(int) key} @ length {reader.BaseStream.Position}");
+                    var result = new ReplayKey(originalKey.TimeStamp,
+                        key, Decode(key, reader));
+                    var possibleLength = reader.BaseStream.Position - (position);
+                    if (reader.BaseStream.Position > position )
+                    {
+                        Debug.WriteLine("Exceeded length by "+(possibleLength)+"bytes");
+                    }else if (reader.BaseStream.Position < position )
+                    {
+                        Debug.WriteLine("lost length by "+(possibleLength)+"bytes");
+                        result.SubKey.Add(DecodeSubNext(reader,remainingLength,originalKey));
+                        //Debug.WriteLine(BitConverter.ToString(reader.ReadBytes((int) possibleLength)));
+                    }
                     return result;
                 }
             }

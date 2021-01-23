@@ -17,7 +17,7 @@ namespace ReplayTestRunner
         {
             ReplayReader reader = new();
             var x = reader.ReadReplay(
-                @"C:\Users\Rai\Downloads\skylords_replay_analyzer\testreplays\rpve_22012021_fire.pmv");
+                @"C:\Users\Rai\Downloads\skylords_replay_analyzer\testreplays\autosave.pmv");
             File.WriteAllText(@".\output.txt", JsonConvert.SerializeObject(x, Settings));
         }
     }
