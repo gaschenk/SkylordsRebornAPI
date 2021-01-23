@@ -9,4 +9,8 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SkylordsRebornAPI\SkylordsRebornAPI.csproj" />
+    </ItemGroup>
+
 </Project>

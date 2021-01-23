@@ -120,7 +120,7 @@ namespace SkylordsRebornAPI.Replay
             return replayKeys;
         }
 
-        private Card ReadCard(BinaryReader reader)
+        private Data.Card ReadCard(BinaryReader reader)
         {
             return new()
             {
@@ -150,7 +150,7 @@ namespace SkylordsRebornAPI.Replay
             //Whatever this is
             var anotherCardCount = reader.ReadByte();
 
-            var cards = new List<Card>();
+            var cards = new List<Data.Card>();
             for (var i = 0; i < cardCount; i++)
                 cards.Add(ReadCard(reader));
 
