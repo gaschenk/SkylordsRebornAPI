@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 
@@ -13,9 +14,11 @@ namespace SkylordsRebornAPI.Replay.ReplayKeys
             var count = reader.ReadUInt16();
             Units = new List<uint>();
             for (var i = 0; i < count; i++) Units.Add(reader.ReadUInt32());
-
+            var newcount = reader.ReadUInt16();
+            Debug.WriteLine(newcount);
+            Debug.WriteLine(newcount);
             Positions = new List<PointF>();
-            for (var i = 0; i < reader.ReadUInt16(); i++)
+            for (var i = 0; i < newcount; i++)
                 Positions.Add(new PointF(reader.ReadSingle(), reader.ReadSingle()));
 
             Unknown = reader.ReadBytes(6);
