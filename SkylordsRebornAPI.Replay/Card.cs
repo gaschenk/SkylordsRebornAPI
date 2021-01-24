@@ -16,11 +16,10 @@ namespace SkylordsRebornAPI.Replay
              * Name = FindLocalizedStringByID(Id,"name", cultureInfo)
              * Description = FindLocalizedStringByID(Id,"desc", cultureInfo)
              */
-            
         }
 
         public string Name { get; protected set; }
-        private uint Id { get; init; }
+        private uint Id { get; }
         public string Description { get; protected set; }
         public abstract Rarity Rarity { get; protected set; }
         public abstract ushort[] Energy { get; protected set; }

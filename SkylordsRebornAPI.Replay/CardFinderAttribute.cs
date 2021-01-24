@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using SkylordsRebornAPI.Replay.Data;
-using SkylordsRebornAPI.Replay.ReplayKeys;
 
 namespace SkylordsRebornAPI.Replay
 {

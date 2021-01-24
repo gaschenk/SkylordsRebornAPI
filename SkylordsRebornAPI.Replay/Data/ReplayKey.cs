@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SkylordsRebornAPI.Replay.ReplayKeys;
 
 namespace SkylordsRebornAPI.Replay.Data
 {

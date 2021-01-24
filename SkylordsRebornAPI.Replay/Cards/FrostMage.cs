@@ -1,6 +1,4 @@
 ﻿using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using SkylordsRebornAPI.Cardbase.Cards;
 using SkylordsRebornAPI.Replay.Data;
 using Rarity = SkylordsRebornAPI.Replay.Data.Rarity;
@@ -17,6 +15,7 @@ namespace SkylordsRebornAPI.Replay.Cards
             CardType = CardType.Creature;
             OrbColors = new[] {OrbColor.Frost};
         }
+
         public override Rarity Rarity { get; protected set; }
         public override ushort[] Energy { get; protected set; }
         public override CardType CardType { get; protected set; }
